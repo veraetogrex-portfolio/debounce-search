@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Debounce Search — veraetogrex_portfolio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Debounce Search · zero dependencies · github.com/veraetogrex-portfolio -->
+  <section class="db" id="search" aria-label="Search input with and without debounce">
+    <header class="db-top">
+      <h1 class="db-title">Debounce</h1>
+      <p class="db-rules"><span>Search input</span><b>Same keystrokes</b><b>Wait 300 ms</b></p>
+    </header>
+
+    <div class="db-scene">
+      <canvas class="db-canvas" aria-hidden="true"></canvas>
+      <div class="db-row is-raw">
+        <span class="db-tag">Request per key</span>
+        <label class="db-field"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input class="db-in" placeholder="Search…" autocomplete="off" spellcheck="false" aria-label="Search"></label>
+        <span class="db-note">—</span>
+        <div class="db-server"><small>GET /search</small><b>0</b><em>requests</em><span class="db-load"><i></i></span></div>
+      </div>
+      <div class="db-row is-deb">
+        <span class="db-tag">Debounced · 300 ms</span>
+        <label class="db-field"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input class="db-mirror" placeholder="Search…" readonly tabindex="-1" aria-hidden="true"></label>
+        <span class="db-note">—</span>
+        <div class="db-server"><small>GET /search</small><b>0</b><em>requests</em><span class="db-load"><i></i></span></div>
+      </div>
+    </div>
+
+    <div class="db-verdict" role="status">
+      <p class="db-caption">Same typing. Count the requests.</p>
+      <p class="db-score"><span class="r">9</span> requests<span class="a">→</span><span class="g">1</span></p>
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>

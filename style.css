@@ -1,0 +1,97 @@
+/* Debounce Search — github.com/veraetogrex-portfolio · zero dependencies */
+:root {
+  --bg: #07080c;
+  --panel: #0b0c12;
+  --text: #f2f3f7;
+  --text-2: #a4a7b6;
+  --text-3: #7f8293;
+  --line: rgba(255, 255, 255, .08);
+  --line-2: rgba(255, 255, 255, .14);
+  --pulse: #7c6cff;
+  --pulse-soft: #a69bff;
+  --ion: #3fe0d0;     /* one request, sent once typing stops */
+  --flare: #ff7a45;   /* a request per keystroke */
+  --font: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --display: var(--font);
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100vh; display: grid; place-items: center; overflow: hidden;
+  background: radial-gradient(65% 60% at 50% 45%, #0e1018, var(--bg) 72%);
+  color: var(--text); font: 16px/1.4 var(--font);
+}
+h1, p { margin: 0; }
+input { font: inherit; color: inherit; }
+
+.db { position: relative; width: 1180px; height: 720px; }
+@media (max-width: 1240px) { .db { zoom: .8; } }
+@media (max-width: 960px)  { .db { zoom: .6; } }
+@media (max-width: 720px)  { .db { zoom: .3; } }
+
+/* ── header ─────────────────────────────────────────── */
+.db-top { height: 96px; }
+.db-title { font: 700 48px/1 var(--display); letter-spacing: .04em; text-transform: uppercase; }
+.db-rules { margin-top: 14px; display: flex; align-items: center; gap: 10px; font: 500 15px var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--text-3); }
+.db-rules span { margin-right: 6px; color: var(--pulse-soft); }
+.db-rules b { padding: 5px 12px; border-radius: 8px; font-weight: 500; color: var(--text-2); box-shadow: 0 0 0 1px var(--line-2) inset; }
+
+/* ── scene: two lanes, same keystrokes ─────────────── */
+.db-scene {
+  position: absolute; left: 0; top: 112px; width: 1180px; height: 500px; border-radius: 24px; overflow: hidden;
+  background: radial-gradient(70% 90% at 50% 40%, #10121b, var(--panel));
+  box-shadow: 0 0 0 1px var(--line) inset, 0 50px 110px -40px rgba(0, 0, 0, .9);
+}
+.db-scene::after { content: ""; position: absolute; left: 32px; right: 32px; top: 250px; height: 1px; background: var(--line); }
+.db-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+.db-row { position: absolute; left: 0; right: 0; height: 250px; }
+.db-row.is-raw { top: 0; }
+.db-row.is-deb { top: 250px; }
+.db-tag { position: absolute; left: 40px; top: 30px; font: 600 15px var(--mono); letter-spacing: .18em; text-transform: uppercase; }
+.is-raw .db-tag { color: var(--flare); }
+.is-deb .db-tag { color: var(--ion); }
+
+.db-field {
+  position: absolute; left: 40px; top: 93px; width: 400px; height: 64px; border-radius: 12px;
+  display: flex; align-items: center; gap: 14px; padding: 0 20px;
+  background: rgba(255, 255, 255, .035); box-shadow: 0 0 0 1px var(--line-2) inset; transition: box-shadow .2s;
+}
+.db-field svg { flex: none; width: 22px; height: 22px; stroke: var(--text-3); }
+.db-field input { width: 100%; border: 0; outline: 0; background: none; font: 500 26px var(--font); caret-color: var(--pulse); }
+.db-field input::placeholder { color: var(--text-3); }
+.db-field:focus-within { box-shadow: 0 0 0 1px var(--pulse) inset, 0 0 0 4px rgba(124, 108, 255, .18); }
+.db-note { position: absolute; left: 42px; top: 172px; font: 500 15px var(--mono); letter-spacing: .08em; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.db-note.is-hit { color: var(--ion); }
+
+.db-server {
+  position: absolute; left: 880px; top: 45px; width: 260px; height: 160px; border-radius: 18px; padding: 20px 24px;
+  background: #12141d; box-shadow: 0 0 0 2px rgba(255, 255, 255, .1) inset; transition: box-shadow .25s, background .25s;
+}
+.db-server small { display: block; font: 500 14px var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--text-3); }
+.db-server b { display: block; margin-top: 6px; font: 700 64px/1 var(--display); font-variant-numeric: tabular-nums; }
+.db-server em { font: 500 15px var(--mono); font-style: normal; letter-spacing: .12em; text-transform: uppercase; color: var(--text-2); }
+.db-load { position: absolute; left: 24px; right: 24px; bottom: 18px; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .08); overflow: hidden; }
+.db-load i { display: block; height: 100%; width: 0; border-radius: 3px; transition: width .25s; }
+.is-raw .db-server b { color: var(--flare); }
+.is-raw .db-load i { background: var(--flare); }
+.is-deb .db-server b { color: var(--ion); }
+.is-deb .db-load i { background: var(--ion); }
+.is-raw .db-server.is-hot { background: #1d1311; box-shadow: 0 0 0 2px rgba(255, 122, 69, .7) inset, 0 0 60px -10px rgba(255, 122, 69, .55); }
+.is-deb .db-server.is-hit { box-shadow: 0 0 0 2px rgba(63, 224, 208, .7) inset, 0 0 60px -10px rgba(63, 224, 208, .5); }
+.db-server b.is-bump { animation: db-bump .3s ease-out; }
+@keyframes db-bump { 40% { transform: scale(1.16); } }
+.db-server.is-shake { animation: db-shake .32s; }
+@keyframes db-shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+/* ── verdict ────────────────────────────────────────── */
+.db-verdict { position: absolute; left: 0; right: 0; top: 632px; height: 70px; text-align: center; }
+.db-verdict > * { position: absolute; left: 0; right: 0; top: 0; transition: opacity .35s, transform .45s cubic-bezier(.34, 1.56, .64, 1); }
+.db-caption { font: 500 30px var(--font); letter-spacing: -.01em; color: var(--text-2); line-height: 56px; }
+.db-score { font: 700 54px/56px var(--display); letter-spacing: .02em; text-transform: uppercase; opacity: 0; transform: translateY(18px) scale(.94); }
+.db-score .r { color: var(--flare); }
+.db-score .g { color: var(--ion); }
+.db-score .a { color: var(--text-3); margin: 0 14px; }
+.db.is-done .db-caption { opacity: 0; transform: translateY(-14px); }
+.db.is-done .db-score { opacity: 1; transform: none; }
